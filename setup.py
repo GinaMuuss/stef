@@ -15,7 +15,7 @@ with open(rq_path, 'r') as requirements_file:
 
 setuptools.setup(
     name="stef",
-    version="1.0.0",
+    version="1.0.1",
     author="Gina Muuss",
     author_email="muuss@uni-bonn.de",
     description="Submission TEst Framework",
@@ -28,7 +28,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    entry_points={'console_scripts': ['stef_runtests = scripts.runtests:main']},
+    entry_points={'console_scripts': ['stef_runtests = stef.scripts.runtests:main']},
     python_requires='>=3.6',
     install_requires=requirements,
     include_package_data=True
