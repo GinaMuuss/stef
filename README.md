@@ -1,2 +1,2 @@
-# stef
-Submission TEst Framework
+# STEF: Submission TEst Framework
+
