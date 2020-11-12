@@ -1,2 +1,3 @@
 include README.md
-include stef_pkg/Dockerfile
+include stef/Dockerfile
+include stef/scripts/*
