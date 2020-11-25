@@ -24,10 +24,9 @@ class BashRunner(Runner):
 
     def _run(self, command_line_arg, input_array):
         inp = "\n".join([" ".join(y) for y in input_array])
-        command_line_arg_str = " ".join(command_line_arg)
         #output = subprocess.check_output(["bash", path + binary_to_test, command_line_arg_str]).trim()
 
-        proc = subprocess.Popen(["bash", self.get_bin_path(), command_line_arg_str],
+        proc = subprocess.Popen(["bash", self.get_bin_path()] + command_line_arg,
                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.solution_base_dir)
         outs, errs = proc.communicate(inp.encode('utf-8'))
         output = outs.decode("utf-8")
