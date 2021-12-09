@@ -43,10 +43,10 @@ class TestBase():
         return solution
 
     def start_tests(self):
-        Logger.log("INFO", "Started Tests: '" + self.testname + "'")
+        Logger.log("INFO", f"Started Tests: '{self.testname}'")
 
     def next_test(self):
-        Logger.log("INFO", "Running test: #" + str(self.current_test_num), "NEW_TEST")
+        Logger.log("INFO", f"Running test: #{self.current_test_num}", "NEW_TEST")
         self.current_test_num += 1
         
     def test(self, command_line_arg, input_array, expected_output, points):
@@ -71,38 +71,42 @@ class TestBase():
 
         if returncode != 0:
             Logger.log("STATUS", "Test failed, non-zero exit code", "FAIL")
+
             if stderr is not None:
-                Logger.log("INFO", "StdErr:")
-                Logger.log("INFO", stderr)
+                Logger.log("INFO", f"StdErr: {stderr}")
             if output is not None:
-                Logger.log("INFO", "StdOut:")
-                Logger.log("INFO", output)
+                Logger.log("INFO", f"StdOut: {output}")
             return False
+
         if solution != expected_output:
             Logger.log("STATUS", "Test failed", "FAIL")
-            Logger.log("INFO", "command line arg: " + " ".join(command_line_arg))
+            Logger.log("INFO", f"command line arg: {' '.join(command_line_arg)}")
+
             Logger.log("INFO", "input:")
             for line in input_array:
                 Logger.log("INFO", " ".join(line))
+
             Logger.log("INFO", "expected output:")
             for line in expected_output:
                 Logger.log("INFO", " ".join(line))
+
             Logger.log("INFO", "parsed solution output:")
             for line in solution:
                 Logger.log("INFO", " ".join(line))
+
             if output is not None and output != "":
-                Logger.log("DEBUG", "Full output trace stdout:")
-                Logger.log("DEBUG", output, "SUB_OUT")
+                Logger.log("DEBUG", f"Full StdOut output: {output}", "SUB_OUT")
             else:
-                Logger.log("DEBUG", "Stdout was empty")
+                Logger.log("DEBUG", "StdOut was empty")
+
             if stderr is not None and stderr != "":
-                Logger.log("DEBUG", "Full output trace stderr:")
-                Logger.log("DEBUG", stderr, "SUB_OUT_ERR")
+                Logger.log("DEBUG", f"Full StdErr output: {stderr}", "SUB_OUT_ERR")
             else:
-                Logger.log("DEBUG", "Stderr was empty")
+                Logger.log("DEBUG", "StdErr was empty")
+
             return False
         else:
-            Logger.log("STATUS", "Test sucessfull", "OK")
+            Logger.log("STATUS", "Test successful", "OK")
             return True
 
     def reset_points(self):
@@ -114,33 +118,36 @@ class TestBase():
     def run_all_testgroups(self):
         self.start_tests()
         for testgroup in self.testgroups:
-            Logger.log("INFO", "Running testgroup: " + testgroup["name"])
+            Logger.log("INFO", f"Running testgroup: {testgroup['name']}")
             self.reset_points()
             testgroup["function"]()
+
+            # allow the 'point_id' value to be missing, in this case the 'name' value will also be used for for the 'point_id'
+            try:
+                testgroup["point_id"]
+            except KeyError:
+                testgroup["point_id"] = testgroup["name"]
+
             if testgroup["point_id"] not in self.points:
                 self.points[testgroup["point_id"]] = 0
-            self.points[testgroup["point_id"]]  += self.current_points
+            self.points[testgroup["point_id"]] += self.current_points
 
             if testgroup["point_id"] not in self.max_points:
                 self.max_points[testgroup["point_id"]] = 0
-            self.max_points[testgroup["point_id"]]  += self.current_max_points
 
-            Logger.log("POINTS", "Testgroup points:" ,"POINTS")
-            Logger.log_points(self.current_points, self.current_max_points)
+            self.max_points[testgroup["point_id"]] += self.current_max_points
 
-    
+            Logger.log("POINTS", f"Testgroup points: {Logger.points_fmt(self.current_points, self.current_max_points)}" ,"POINTS")
 
     def evaluate(self):
-        Logger.log("POINTS", "==========Test evaluation==========", "POINTS")
+        Logger.log("POINTS", f"========== Test evaluation for '{self.testname}' ==========", "POINTS")
         sumpoint = 0
         summaxpoint = 0
         for i in self.points:
-            Logger.log("POINTS", "Points for testgroup: '" + i + "'", "POINTS")
-            Logger.log_points(self.points[i], self.max_points[i])
+            Logger.log("POINTS", f"Points for testgroup: '{i}': {Logger.points_fmt(self.points[i], self.max_points[i])}", "POINTS")
             sumpoint += self.points[i]
             summaxpoint += self.max_points[i]
-        Logger.log("POINTS", "Overall result:", "POINTS")
-        Logger.log_points(sumpoint, summaxpoint)
+        Logger.log("POINTS", f"Overall result: {Logger.points_fmt(sumpoint, summaxpoint)}", "POINTS")
         if sumpoint == summaxpoint:
             Logger.log("INFO", "Well done!", "PRAISE")
 

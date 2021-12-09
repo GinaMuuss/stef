@@ -11,16 +11,16 @@ class DockerRunner(Runner):
         super().__init__(solution_base_dir, binary_name, skip_setup=skip_setup)
         self.image_name = "testframework_test"
         self.build_path = tempfile.mkdtemp()
-        print("Docker build path: ", self.build_path)
+        print(f"Docker build path: {self.build_path}")
         self.docker_client = docker.from_env()
 
     # guarentees some prerequirements
     # can be overriden, should return 1 if the setup failed
-    def prerequierments(self):
-        Logger.log("DEBUG", "Starting prerequirments")
-        self.prerequierments_run = self.build_docker_image()
-        Logger.log("DEBUG", "prerequirments finished")
-        return self.prerequierments_run
+    def prerequirements(self):
+        Logger.log("DEBUG", "Starting prerequirements")
+        self.prerequirements_run = self.build_docker_image()
+        Logger.log("DEBUG", "prerequirements finished")
+        return self.prerequirements_run
 
     def build_docker_image(self):
         Logger.log("DEBUG", "moving files into place")
@@ -28,9 +28,9 @@ class DockerRunner(Runner):
         self.copytree(self.solution_base_dir, self.build_path)
         Logger.log("DEBUG", "building docker image")
         self.docker_image, _ = self.docker_client.images.build(path=self.build_path, tag=self.image_name)
-        Logger.log("DEBUG", "creating docker container from image " + self.docker_image.short_id)
+        Logger.log("DEBUG", f"creating docker container from image {self.docker_image.short_id}")
         self.docker_container = self.docker_client.containers.create(self.docker_image, command='sleep 100000', detach=True) # 
-        Logger.log("DEBUG", "starting docker container " + self.docker_container.short_id)
+        Logger.log("DEBUG", f"starting docker container {self.docker_container.short_id}")
         if self.docker_container is None:
             return False
         self.docker_container.start()
@@ -47,5 +47,5 @@ class DockerRunner(Runner):
         inp = "\n".join([" ".join(y) for y in input_array])
         command_line_arg_str = " ".join(command_line_arg)
 
-        returncode, outs, errs = self.run_command(['sh', '-c', 'echo ' +  inp + ' | ' + ' ./run.sh ' + command_line_arg_str])
+        returncode, outs, errs = self.run_command(['sh', '-c', f'echo {inp} | ./run.sh {command_line_arg_str}'])
         return returncode, outs, errs
