@@ -17,19 +17,19 @@ def main():
     args = parser.parse_args()
     
     testpath = args.directory_to_load_tests_from
-    print("Running tests in folder: ", testpath)
+    print(f"Running tests in folder: {testpath}")
     spec = importlib.util.spec_from_file_location("currenttest", testpath + "/test.py")
     test = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(test)
 
-    print("Testing solution at: ", args.directory_to_test)
+    print(f"Testing solution at: {args.directory_to_test}")
 
     if args.runner == "bash":
         runner = BashRunner(args.directory_to_test, args.solutionbinary)
     elif args.runner == "docker":
         runner = DockerRunner(args.directory_to_test, args.solutionbinary)
     else:
-        raise Exception("Unsupported runner ", args.runner)
+        raise Exception(f"Unsupported runner: {args.runner}")
 
     testgroups, skip_testgroups = None, None
     if args.testgroups != None and args.testgroups != "":
