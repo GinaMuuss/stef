@@ -1,9 +1,10 @@
+#!/usr/bin/env python3
+
 import argparse
 import importlib.util
-import os
-from stef.base import TestType
 from stef.bashrunner import BashRunner
 from stef.dockerrunner import DockerRunner
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -15,7 +16,7 @@ def main():
     parser.add_argument('--skip_testgroups', type=str, help='don\'t run the selected testgroups, comma seperated')
 
     args = parser.parse_args()
-    
+
     testpath = args.directory_to_load_tests_from
     print(f"Running tests in folder: {testpath}")
     spec = importlib.util.spec_from_file_location("currenttest", testpath + "/test.py")
@@ -32,15 +33,16 @@ def main():
         raise Exception(f"Unsupported runner: {args.runner}")
 
     testgroups, skip_testgroups = None, None
-    if args.testgroups != None and args.testgroups != "":
+    if args.testgroups is not None and args.testgroups != "":
         testgroups = args.testgroups.split(",")
-    if args.skip_testgroups != None and args.skip_testgroups != "":
+    if args.skip_testgroups is not None and args.skip_testgroups != "":
         skip_testgroups = args.skip_testgroups.split(",")
 
     thistest = test.Test()
     thistest.set_testgroups_to_runskip(testgroups, skip_testgroups)
 
     thistest.run(runner)
+
 
 if __name__ == "__main__":
     main()

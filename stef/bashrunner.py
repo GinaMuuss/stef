@@ -3,11 +3,12 @@ import subprocess
 from stef.runner import Runner
 from stef.logger import Logger
 
+
 class BashRunner(Runner):
     def __init__(self, solution_base_dir, binary_name, skip_setup=True):
         super().__init__(solution_base_dir, binary_name, skip_setup=skip_setup)
 
-    # guarentees some prerequirements 
+    # guarantees some prerequirements
     # can be overriden, should return 1 if the setup failed
     def prerequirements(self):
         self.prerequirements_run = True
@@ -24,8 +25,6 @@ class BashRunner(Runner):
 
     def _run(self, command_line_arg, input_array):
         inp = "\n".join([" ".join(y) for y in input_array])
-        #output = subprocess.check_output(["bash", path + binary_to_test, command_line_arg_str]).trim()
-
         proc = subprocess.Popen(["bash", self.get_bin_path()] + command_line_arg,
                                 stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE,

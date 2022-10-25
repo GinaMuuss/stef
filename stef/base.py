@@ -1,12 +1,14 @@
 from enum import Enum
 from stef.logger import Logger
 
+
 class TestType(Enum):
     hidden = "hidden"
     shown = "shown"
 
     def __str__(self):
         return self.value
+
 
 class TestBase():
     def __init__(self, testname, testtype, testgroups_to_run=None, testgroups_to_skip=None):
@@ -26,18 +28,18 @@ class TestBase():
         self.testgroups_to_run = testgroups_to_run
         self.testgroups_to_skip = testgroups_to_skip
 
-    def parseOutput(self, string):
+    def parse_output(self, string):
         actual_out = [x for x in string.split("\n")]
         output = []
         for line in actual_out:
             splitline = line.partition(":")
-            if splitline[2] == None or splitline[2] == "":
+            if splitline[2] is None or splitline[2] == "":
                 output.append(["UNKNOWN", splitline[0]])
             else:
                 output.append([splitline[0].strip(), splitline[2].strip()])
         return output
 
-    def getSolution(self, output):
+    def get_solution(self, output):
         solution = list(filter(lambda x: x[0] == self.solution_pre_string, output))
         solution = list(map(lambda x: x[1].split(" "), solution))
         return solution
@@ -48,7 +50,7 @@ class TestBase():
     def next_test(self):
         Logger.log("INFO", f"Running test: #{self.current_test_num}", "NEW_TEST")
         self.current_test_num += 1
-        
+
     def test(self, command_line_arg, input_array, expected_output, points):
         self.current_max_points += points
         success = self._run_tests_with_runner(command_line_arg, input_array, expected_output)
@@ -66,8 +68,8 @@ class TestBase():
 
         returncode, output, stderr = self.runner.run(command_line_arg, input_array)
 
-        actual_out = self.parseOutput(output)
-        solution = self.getSolution(actual_out)
+        actual_out = self.parse_output(output)
+        solution = self.get_solution(actual_out)
 
         if returncode != 0:
             Logger.log("STATUS", "Test failed, non-zero exit code", "FAIL")
@@ -137,7 +139,7 @@ class TestBase():
 
             self.max_points[testgroup["point_id"]] += self.current_max_points
 
-            Logger.log("POINTS", f"Testgroup points: {Logger.points_fmt(self.current_points, self.current_max_points)}" ,"POINTS")
+            Logger.log("POINTS", f"Testgroup points: {Logger.points_fmt(self.current_points, self.current_max_points)}", "POINTS")
 
     def evaluate(self):
         Logger.log("POINTS", f"========== Test evaluation for '{self.testname}' ==========", "POINTS")
@@ -152,10 +154,10 @@ class TestBase():
             Logger.log("INFO", "Well done!", "PRAISE")
 
     def run(self, runner):
-        if self.testgroups_to_run != None:
+        if self.testgroups_to_run is not None:
             self.testgroups = filter(lambda x: x["name"] in self.testgroups_to_run, self.testgroups)
 
-        if self.testgroups_to_skip != None:
+        if self.testgroups_to_skip is not None:
             self.testgroups = filter(lambda x: x["name"] not in self.testgroups_to_skip, self.testgroups)
 
         self.runner = runner
