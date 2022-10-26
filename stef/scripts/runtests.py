@@ -18,6 +18,7 @@ def main():
     parser.add_argument('--runner', type=str, help='the runnertype to use', default="bash")
     parser.add_argument('--testgroups', type=str, help='only run the selected testgroups, comma separated')
     parser.add_argument('--skip_testgroups', type=str, help="don't run the selected testgroups, comma separated")
+    parser.add_argument('--debug', action='store_true')
 
     args = parser.parse_args()
 
@@ -51,8 +52,7 @@ def main():
 
     thistest = test.Test()
     thistest.set_testgroups_to_runskip(testgroups, skip_testgroups)
-
-    thistest.run(runner)
+    thistest.run(runner, args.debug)
 
 
 if __name__ == "__main__":

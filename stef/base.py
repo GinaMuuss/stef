@@ -56,9 +56,8 @@ class TestBase():
         success = self._run_tests_with_runner(command_line_arg, input_array, expected_output)
         if success:
             self.current_points += points
-            Logger.log_points(points, points)
-        else:
-            Logger.log_points(0, points)
+        if self.debug:
+            Logger.log_points(points if success else 0, points)
 
     # input_array and expected_output should be a twodimensional arrays, where the inner arrays each represent a line.
     # The values of the inner array will be sperated by spaces
@@ -95,6 +94,9 @@ class TestBase():
             Logger.log("INFO", "parsed solution output:")
             for line in solution:
                 Logger.log("INFO", " ".join(line))
+
+            if not self.debug:
+                return False
 
             if output is not None and output != "":
                 Logger.log("DEBUG", f"Full StdOut output: {output}", "SUB_OUT")
@@ -139,7 +141,8 @@ class TestBase():
 
             self.max_points[testgroup["point_id"]] += self.current_max_points
 
-            Logger.log("POINTS", f"Testgroup points: {Logger.points_fmt(self.current_points, self.current_max_points)}", "POINTS")
+            if self.debug:
+                Logger.log("POINTS", f"Testgroup points: {Logger.points_fmt(self.current_points, self.current_max_points)}", "POINTS")
 
     def evaluate(self):
         Logger.log("POINTS", f"========== Test evaluation for '{self.testname}' ==========", "POINTS")
@@ -153,12 +156,14 @@ class TestBase():
         if sumpoint == summaxpoint:
             Logger.log("INFO", "Well done!", "PRAISE")
 
-    def run(self, runner):
+    def run(self, runner, debug=False):
+        self.debug = debug
+
         if self.testgroups_to_run is not None:
-            self.testgroups = filter(lambda x: x["name"] in self.testgroups_to_run, self.testgroups)
+            self.testgroups = [t for t in self.testgroups if t["name"] in self.testgroups_to_run]
 
         if self.testgroups_to_skip is not None:
-            self.testgroups = filter(lambda x: x["name"] not in self.testgroups_to_skip, self.testgroups)
+            self.testgroups = [t for t in self.testgroups if t["name"] not in self.testgroups_to_run]
 
         self.runner = runner
         if self.runner.prepare():
