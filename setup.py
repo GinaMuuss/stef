@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import setuptools
 from os.path import dirname, join, abspath
 
@@ -15,7 +17,7 @@ with open(rq_path, 'r') as requirements_file:
 
 setuptools.setup(
     name="stef",
-    version="1.0.6",
+    version="1.0.7",
     author="Gina Muuss",
     author_email="muuss@uni-bonn.de",
     description="Submission TEst Framework",

@@ -13,12 +13,9 @@ class Runner():
 
     def get_bin_path(self):
         return self.binary_name
-        if self.solution_base_dir.endswith("/"):
-            return self.solution_base_dir + self.binary_name
-        return f"{self.solution_base_dir}/{self.binary_name}"
 
     def prerequirements(self):
-        return True
+        return self.check_for_file(self.binary_name)
 
     def copytree(self, src, dst, symlinks=False, ignore=None):
         for item in os.listdir(src):
