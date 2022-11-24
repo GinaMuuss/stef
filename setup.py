@@ -17,7 +17,7 @@ with open(rq_path, 'r') as requirements_file:
 
 setuptools.setup(
     name="stef",
-    version="1.0.7",
+    version="1.0.8",
     author="Gina Muuss",
     author_email="muuss@uni-bonn.de",
     description="Submission TEst Framework",
