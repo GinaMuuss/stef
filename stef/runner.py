@@ -2,6 +2,7 @@ import os
 import shutil
 from stef.logger import Logger
 
+
 class Runner():
     def __init__(self, solution_base_dir, binary_name, skip_setup=False):
         self.prerequirements_run = False
@@ -12,12 +13,9 @@ class Runner():
 
     def get_bin_path(self):
         return self.binary_name
-        if self.solution_base_dir.endswith("/"):
-            return self.solution_base_dir + self.binary_name
-        return f"{self.solution_base_dir}/{self.binary_name}"
 
     def prerequirements(self):
-        return True
+        return self.check_for_file(self.binary_name)
 
     def copytree(self, src, dst, symlinks=False, ignore=None):
         for item in os.listdir(src):
@@ -48,7 +46,7 @@ class Runner():
         else:
             Logger.log("STATUS", "Makefile ran successfully", "OK")
             return True
-    
+
     def check_for_file(self, filename):
         items = os.listdir(self.solution_base_dir)
         for names in items:

@@ -14,7 +14,7 @@ class DockerRunner(Runner):
         print(f"Docker build path: {self.build_path}")
         self.docker_client = docker.from_env()
 
-    # guarentees some prerequirements
+    # guarantees some prerequirements
     # can be overriden, should return 1 if the setup failed
     def prerequirements(self):
         Logger.log("DEBUG", "Starting prerequirements")
@@ -29,7 +29,7 @@ class DockerRunner(Runner):
         Logger.log("DEBUG", "building docker image")
         self.docker_image, _ = self.docker_client.images.build(path=self.build_path, tag=self.image_name)
         Logger.log("DEBUG", f"creating docker container from image {self.docker_image.short_id}")
-        self.docker_container = self.docker_client.containers.create(self.docker_image, command='sleep 100000', detach=True) # 
+        self.docker_container = self.docker_client.containers.create(self.docker_image, command='sleep 100000', detach=True)
         Logger.log("DEBUG", f"starting docker container {self.docker_container.short_id}")
         if self.docker_container is None:
             return False
@@ -38,7 +38,6 @@ class DockerRunner(Runner):
 
     def run_command(self, command, workdir="/evaluation/solution/"):
         returncode, (outs, errs) = self.docker_container.exec_run(command, stderr=True, stdout=True, workdir=workdir, demux=True)
-        #returncode = self.docker_container.wait()
         output = outs.decode("utf-8") if outs is not None else ""
         stderr = errs.decode("utf-8") if errs is not None else ""
         return returncode, output, stderr
@@ -46,6 +45,5 @@ class DockerRunner(Runner):
     def _run(self, command_line_arg, input_array):
         inp = "\n".join([" ".join(y) for y in input_array])
         command_line_arg_str = " ".join(command_line_arg)
-
         returncode, outs, errs = self.run_command(['sh', '-c', f'echo {inp} | ./run.sh {command_line_arg_str}'])
         return returncode, outs, errs

@@ -1,5 +1,6 @@
 from termcolor import colored, cprint
 
+
 class Logger():
 
     COLOR_MAP = {
