@@ -51,7 +51,7 @@ class TestBase():
         Logger.log("INFO", f"Running test: #{self.current_test_num}", "NEW_TEST")
         self.current_test_num += 1
 
-    def test(self, command_line_arg, input_array, expected_output, points):
+    def test(self, command_line_arg, input_array, expected_output, points=1):
         self.current_max_points += points
         success = self._run_tests_with_runner(command_line_arg, input_array, expected_output)
         if success:
@@ -81,7 +81,7 @@ class TestBase():
 
         if solution != expected_output:
             Logger.log("STATUS", "Test failed", "FAIL")
-            Logger.log("INFO", f"command line arg: {' '.join(command_line_arg)}")
+            Logger.log("INFO", f"command line args: {' '.join(command_line_arg)}")
 
             Logger.log("INFO", "input:")
             for line in input_array:
