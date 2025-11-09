@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stef"
+version = "1.0.9"
+authors = [
+    { name = "Gina Muuss", email = "muuss@uni-bonn.de" },
+    { name = "Lennart Buhl", email = "buhl@cs.uni-bonn.de" },
+]
+description = "Submission TEst Framework"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+urls = { Homepage = "https://github.com/GinaMuuss/stef" }
+requires-python = ">=3.6"
+dependencies = [
+    "docker>=4.3.0",
+    "termcolor>=1.1.0",
+]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.scripts]
+stef_runtests = "stef.scripts.runtests:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages]
+find = { namespaces = false }
