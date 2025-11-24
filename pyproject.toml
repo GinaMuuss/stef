@@ -18,7 +18,7 @@ classifiers = [
 urls = { Homepage = "https://github.com/GinaMuuss/stef" }
 requires-python = ">=3.6"
 dependencies = [
-    "docker>=4.3.0",
+    "docker>=4.3.1",
     "termcolor>=1.1.0",
 ]
 

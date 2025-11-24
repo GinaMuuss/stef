@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--runner', type=str, help='the runnertype to use', default="bash")
     parser.add_argument('--testgroups', type=str, help='only run the selected testgroups, comma separated')
     parser.add_argument('--skip_testgroups', type=str, help="don't run the selected testgroups, comma separated")
-    parser.add_argument('--debug', action='store_true')
+    parser.add_argument('--debug', action='store_true', help="enable debug logging")
 
     args = parser.parse_args()
 
