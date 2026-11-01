@@ -166,6 +166,9 @@ class TestBase():
             self.testgroups = [t for t in self.testgroups if t["name"] not in self.testgroups_to_run]
 
         self.runner = runner
-        if self.runner.prepare():
-            self.run_all_testgroups()
-            self.evaluate()
+        try:
+            if self.runner.prepare():
+                self.run_all_testgroups()
+                self.evaluate()
+        finally:
+            self.runner.cleanup()
