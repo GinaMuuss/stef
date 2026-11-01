@@ -7,8 +7,8 @@ from stef.logger import Logger
 
 
 class DockerRunner(Runner):
-    def __init__(self, solution_base_dir, binary_name, skip_setup=False):
-        super().__init__(solution_base_dir, binary_name, skip_setup=skip_setup)
+    def __init__(self, solution_base_dir, binary_name, skip_setup=False, timeout=None):
+        super().__init__(solution_base_dir, binary_name, skip_setup=skip_setup, timeout=timeout)
         self.image_name = "testframework_test"
         self.build_path = tempfile.mkdtemp()
         print(f"Docker build path: {self.build_path}")
@@ -45,6 +45,7 @@ class DockerRunner(Runner):
     def _run(self, command_line_arg, input_array):
         inp = "\n".join([" ".join(y) for y in input_array])
         # Input and arguments are passed as data, so the shell never interprets them
-        script = 'printf "%s" "$STEF_INPUT" | ./run.sh "$@"'
+        limit = f'timeout -s KILL {self.timeout} ' if self.timeout is not None else ''
+        script = f'printf "%s" "$STEF_INPUT" | {limit}./run.sh "$@"'
         returncode, outs, errs = self.run_command(['sh', '-c', script, 'sh'] + command_line_arg, environment={'STEF_INPUT': inp})
         return returncode, outs, errs

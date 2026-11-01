@@ -4,7 +4,10 @@ from stef.logger import Logger
 
 
 class Runner():
-    def __init__(self, solution_base_dir, binary_name, skip_setup=False):
+    TIMEOUT_RETURNCODE = 124
+
+    def __init__(self, solution_base_dir, binary_name, skip_setup=False, timeout=None):
+        self.timeout = timeout
         self.prerequirements_run = False
         self.prepared = False
         self.solution_base_dir = solution_base_dir

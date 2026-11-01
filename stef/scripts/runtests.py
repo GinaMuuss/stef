@@ -18,6 +18,7 @@ def main():
     parser.add_argument('--runner', type=str, help='the runnertype to use', default="bash")
     parser.add_argument('--testgroups', type=str, help='only run the selected testgroups, comma separated')
     parser.add_argument('--skip_testgroups', type=str, help="don't run the selected testgroups, comma separated")
+    parser.add_argument('--timeout', type=float, help="seconds a single test may run, unlimited by default")
     parser.add_argument('--debug', action='store_true', help="enable debug logging")
 
     args = parser.parse_args()
@@ -38,9 +39,9 @@ def main():
     spec.loader.exec_module(test)
 
     if args.runner == "bash":
-        runner = BashRunner(args.codedir, args.solutionbinary)
+        runner = BashRunner(args.codedir, args.solutionbinary, timeout=args.timeout)
     elif args.runner == "docker":
-        runner = DockerRunner(args.codedir, args.solutionbinary)
+        runner = DockerRunner(args.codedir, args.solutionbinary, timeout=args.timeout)
     else:
         raise Exception(f"Unsupported runner: {args.runner}")
 
