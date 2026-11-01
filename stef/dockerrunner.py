@@ -36,14 +36,15 @@ class DockerRunner(Runner):
         self.docker_container.start()
         return True
 
-    def run_command(self, command, workdir="/evaluation/solution/"):
-        returncode, (outs, errs) = self.docker_container.exec_run(command, stderr=True, stdout=True, workdir=workdir, demux=True)
+    def run_command(self, command, workdir="/evaluation/solution/", environment=None):
+        returncode, (outs, errs) = self.docker_container.exec_run(command, stderr=True, stdout=True, workdir=workdir, demux=True, environment=environment)
         output = outs.decode("utf-8") if outs is not None else ""
         stderr = errs.decode("utf-8") if errs is not None else ""
         return returncode, output, stderr
 
     def _run(self, command_line_arg, input_array):
         inp = "\n".join([" ".join(y) for y in input_array])
-        command_line_arg_str = " ".join(command_line_arg)
-        returncode, outs, errs = self.run_command(['sh', '-c', f'echo {inp} | ./run.sh {command_line_arg_str}'])
+        # Input and arguments are passed as data, so the shell never interprets them
+        script = 'printf "%s" "$STEF_INPUT" | ./run.sh "$@"'
+        returncode, outs, errs = self.run_command(['sh', '-c', script, 'sh'] + command_line_arg, environment={'STEF_INPUT': inp})
         return returncode, outs, errs
