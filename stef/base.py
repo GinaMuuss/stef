@@ -163,7 +163,7 @@ class TestBase():
             self.testgroups = [t for t in self.testgroups if t["name"] in self.testgroups_to_run]
 
         if self.testgroups_to_skip is not None:
-            self.testgroups = [t for t in self.testgroups if t["name"] not in self.testgroups_to_run]
+            self.testgroups = [t for t in self.testgroups if t["name"] not in self.testgroups_to_skip]
 
         self.runner = runner
         if self.runner.prepare():
