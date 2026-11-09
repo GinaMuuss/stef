@@ -77,6 +77,10 @@ class Runner():
             Logger.log("STATUS", "setup.sh ran successfully", "OK")
             return True
 
+    # releases resources held by the runner, can be overriden
+    def cleanup(self):
+        pass
+
     def prepare(self):
         if not self.prepared:
             Logger.log("DEBUG", "started preparing")

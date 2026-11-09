@@ -13,6 +13,7 @@ class DockerRunner(Runner):
         self.build_path = tempfile.mkdtemp()
         print(f"Docker build path: {self.build_path}")
         self.docker_client = docker.from_env()
+        self.docker_container = None
 
     # guarantees some prerequirements
     # can be overriden, should return 1 if the setup failed
@@ -27,7 +28,7 @@ class DockerRunner(Runner):
         shutil.copyfile(os.path.join(os.path.abspath(os.path.dirname(__file__)), "Dockerfile"), self.build_path + "/Dockerfile")
         self.copytree(self.solution_base_dir, self.build_path)
         Logger.log("DEBUG", "building docker image")
-        self.docker_image, _ = self.docker_client.images.build(path=self.build_path, tag=self.image_name)
+        self.docker_image, _ = self.docker_client.images.build(path=self.build_path, tag=self.image_name, rm=True)
         Logger.log("DEBUG", f"creating docker container from image {self.docker_image.short_id}")
         self.docker_container = self.docker_client.containers.create(self.docker_image, command='sleep 100000', detach=True)
         Logger.log("DEBUG", f"starting docker container {self.docker_container.short_id}")
@@ -48,3 +49,10 @@ class DockerRunner(Runner):
         script = 'printf "%s" "$STEF_INPUT" | ./run.sh "$@"'
         returncode, outs, errs = self.run_command(['sh', '-c', script, 'sh'] + command_line_arg, environment={'STEF_INPUT': inp})
         return returncode, outs, errs
+
+    def cleanup(self):
+        Logger.log("DEBUG", "removing docker container and build path")
+        if self.docker_container is not None:
+            self.docker_container.remove(force=True)
+            self.docker_container = None
+        shutil.rmtree(self.build_path, ignore_errors=True)
